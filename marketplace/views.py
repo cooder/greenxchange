@@ -15,6 +15,11 @@ class EnergyType_ViewSet(viewsets.ModelViewSet):
     @staticmethod
     def add_energy_type(request):
         try:
+            energy = Energy.objects.filter(name=request.data.get('name'))
+            if energy:
+                response = {"status": False, "message": f"{request.data.get('name')} already exists", "result": ""}
+                return Response(response, status.HTTP_200_OK)
+
             serialized_data = EnergyTypeSerializers(data=request.data)
             if serialized_data.is_valid():
                 serialized_data.save()
