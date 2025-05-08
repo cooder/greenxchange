@@ -15,7 +15,7 @@ class EnergyType_ViewSet(viewsets.ModelViewSet):
     @staticmethod
     def add_energy_type(request):
         try:
-            energy = Energy.objects.filter(name=request.data.get('name'))
+            energy = Energy_Type.objects.filter(name=request.data.get('name'))
             if energy:
                 response = {"status": False, "message": f"{request.data.get('name')} already exists", "result": ""}
                 return Response(response, status.HTTP_200_OK)
@@ -326,14 +326,14 @@ class Offer_Energy_ViewSet(viewsets.ModelViewSet):
 
             if offer_status == 'accepted':
                 energy_id = energy_offer.energy_id
-                energy = Energy.objects.filter(id=energy_id).first()
+                energy = Energy.objects.filter(id=energy_id.id).first()
                 if not energy:
                     return Response({"status": True, "message": "No energy against this offer" }, status=status.HTTP_200_OK)
                     
-                if energy.offered_quantity <= energy.quantity and energy.status =='available':
+                if energy_offer.offered_quantity <= energy.quantity and energy.status =='available':
                     energy_offer.status= offer_status
                     energy_offer.save()
-                    energy.quantity = int(energy.quantity) - int(energy.offered_quantity)
+                    energy.quantity = int(energy.quantity) - int(energy_offer.offered_quantity)
                     energy.save()
                     return Response({"status": True, "message": "Offer accepted successfully"}, status=status.HTTP_200_OK)
                 else:
