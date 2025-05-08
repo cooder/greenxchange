@@ -153,7 +153,7 @@ class Energy_ViewSet(viewsets.ModelViewSet):
                 
             # Changing energy status on runtime when user view specific energy 
             if energy.status=='expired':   # check if energy expiry date gets updated then change status then check units and change status accordingly
-                if timezone.now() < each.expiry_date: 
+                if timezone.now() < energy.expiry_date: 
                     if energy.unit > 0:
                         energy.status=='available'
                     else:
